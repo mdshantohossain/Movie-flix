@@ -12,17 +12,27 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Formik } from "formik";
 import * as yup from "yup";
+import { Redirect, router } from "expo-router";
+import { createUser } from "@/libs/appwrite";
 
 import { images } from "@/constants";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
-import { router } from "expo-router";
+import { RegisterFormDataType } from "@/types";
+import { useGlobalContext } from "@/context/GlobalProvider";
+
 
 const SignIn = () => {
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+    // redirect to home if user is already logged in
+     const { isLoggedIn, isLoading } = useGlobalContext();
+        if(!isLoggedIn && !isLoading) return <Redirect href="/home" />
+
 
   // validation scema for form
   const validationSchema = yup.object({
+    username: yup.string().required("Username is required"),
     email: yup.string().email().required("Email is required"),
     password: yup
       .string()
@@ -32,9 +42,21 @@ const SignIn = () => {
   });
 
   // handle form submit
-  const handleSubmit = (values: object, { resetForm }: any) => {
-    setIsloading(true);
-    console.log(values);
+  const handleSubmit = async (values: RegisterFormDataType, { resetForm }: any) => {
+    setIsSubmitting(true);
+    try {
+      
+     const res = await createUser(values);
+
+      if (res) {
+        resetForm({ values: "" });
+        router.replace("/home");
+      }
+    } catch(error: any) {
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -57,12 +79,21 @@ const SignIn = () => {
           </Text>
 
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ username: "", email: "", password: "" }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
             {({ errors, values, touched, handleChange, handleSubmit }) => (
               <View className="mt-10">
+
+                <FormField
+                  label="Username"
+                  placeholder="Enter your username"
+                  onChangeText={handleChange("username")}
+                  value={values.username}
+                  error={touched.username && errors.username && errors.username}
+                />
+
                 <FormField
                   label="Email"
                   placeholder="Enter your email"
@@ -85,7 +116,7 @@ const SignIn = () => {
                   label="Sign Up"
                   containerStyles="mt-4 h-[42px]"
                   onPress={handleSubmit}
-                  isLoading={isLoading}
+                  isLoading={isSubmitting}
                 />
               </View>
             )}

@@ -16,10 +16,18 @@ import * as yup from "yup";
 import { images } from "@/constants";
 import FormField from "@/components/FormField";
 import Button from "@/components/Button";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
+import { signIn } from "@/libs/appwrite";
+import { LoginFormDataType } from "@/types";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const SignIn = () => {
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  // redirect to home if user is already logged in
+   const { isLoggedIn, isLoading } = useGlobalContext();
+      if(!isLoggedIn && !isLoading) return <Redirect href="/home" />
+  
 
   // validation scema for form
   const validationSchema = yup.object({
@@ -32,9 +40,21 @@ const SignIn = () => {
   });
 
   // handle form submit
-  const handleSubmit = (values: object, { resetForm }: any) => {
-    setIsloading(true);
-    console.log(values);
+  const handleSubmit = async (values: LoginFormDataType, { resetForm }: any) => {
+    setIsSubmitting(true);
+
+    try {
+
+      await signIn(values.email, values.password);
+
+      resetForm({ values: "" });
+      router.replace("/home");
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -87,7 +107,7 @@ const SignIn = () => {
                     label="Sign In"
                     containerStyles="mt-4 h-[42px]"
                     onPress={handleSubmit}
-                    isLoading={isLoading}
+                    isLoading={isSubmitting}
                   />
                 </View>
               )}

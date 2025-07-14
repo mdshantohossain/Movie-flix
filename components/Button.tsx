@@ -15,7 +15,7 @@ const Button = ({label, onPress, containerStyles, textStyles, isLoading}: Props)
   return (
     <TouchableOpacity
         onPress={onPress}
-        activeOpacity={0.7}
+        activeOpacity={0.8}
         className={`bg-secondary-200 rounded-xl items-center justify-center ${isLoading && 'opacity-50'} ${containerStyles}`}
         disabled={isLoading}
   >

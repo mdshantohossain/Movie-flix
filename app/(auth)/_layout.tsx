@@ -1,5 +1,5 @@
 
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
 import React from 'react'
 import { Stack } from 'expo-router'
 
@@ -8,10 +8,9 @@ const AuthLayout = () => {
     <Stack 
       screenOptions={{
         headerShown: false,
+        animation: 'slide_from_left'
       }}
     >
-      {/* <StatusBar barStyle="light-content" className="bg-primary" /> */}
-
         <Stack.Screen name="sign-in" />
         <Stack.Screen name="sign-up" />
     </Stack>
@@ -21,3 +20,11 @@ const AuthLayout = () => {
 export default AuthLayout
 
 const styles = StyleSheet.create({})
+
+
+/*
+
+package name: com.jsm.movieflix
+
+
+*/

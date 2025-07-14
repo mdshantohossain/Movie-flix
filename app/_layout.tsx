@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { SplashScreen, Stack } from 'expo-router';
+import { Slot, SplashScreen, Stack } from 'expo-router';
 import '@/global.css';
 import {useFonts} from 'expo-font';
+import GlobalProvider from '@/context/GlobalProvider';
+import { StatusBar } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,13 +26,20 @@ const [fontsLoaded, error] = useFonts({
   }, [fontsLoaded, error]);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-        <Stack.Screen name="index" options={{ headerShown: false}} />
-    </Stack>
+    <GlobalProvider>
+       {/* status bar handle */}
+       <StatusBar barStyle={'light-content'}  className='bg-primary'/>
+        <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+       
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(tabs)" />
+      </Stack>
+    </GlobalProvider>
   )
 }
 

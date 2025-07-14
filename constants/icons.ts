@@ -13,4 +13,5 @@ export default {
   eyeHide: require("@/assets/icons/eye-hide.png"),
   eye: require("@/assets/icons/eye.png"),
   play: require("@/assets/icons/play.png"),
+  close: require("@/assets/icons/close.png"),
 };
